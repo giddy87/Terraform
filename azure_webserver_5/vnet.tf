@@ -31,6 +31,19 @@ ip_configuration {
     name                          = "production"
     subnet_id                     = data.azurerm_subnet.production.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id = azurerm_public_ip.webserverip[count.index].id
   }
 
+}
+
+resource "azurerm_public_ip" "webserverip" {
+  count = var.nic_count
+  name                = "webserverip${count.index}"
+  resource_group_name = azurerm_resource_group.rg-test1.name
+  location            = var.Location
+  allocation_method   = "Dynamic"
+
+  tags = {
+    environment = "Production"
+  }
 }
